@@ -1,7 +1,14 @@
 .*/
+.*
+!.gitignore
 
 *_
 _*
 *_.*
-_*.*
 
+Untitled*
+
+*.png
+*.bmp
+
+imaging/
