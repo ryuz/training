@@ -6,8 +6,11 @@
 _*
 *_.*
 
+*.pth
+
 Untitled*
 
+*.jpg
 *.png
 *.bmp
 
