@@ -22,6 +22,7 @@ table_chrominance_quantization = np.array([
     [99, 99, 99, 99, 99, 99, 99, 99],
 ])
 
+# Category length, Code word
 tbl_luminance_dc = [
     [0,  2, 0b00],
     [1,  3, 0b010],
@@ -37,6 +38,7 @@ tbl_luminance_dc = [
     [11, 9, 0b111111110],
 ]
 
+# Category length, Code word
 tbl_chrominance_dc = [
     [ 0,  2, 0b00],
     [ 1,  2, 0b01],
@@ -52,6 +54,7 @@ tbl_chrominance_dc = [
     [11, 11, 0b11111111110],
 ]
 
+# Run/Size, Code length, Code word
 tbl_luminance_ac = [
     [0x0, 0x0,  4, 0b1010], # EOB
     [0x0, 0x1,  2, 0b00],
@@ -217,6 +220,7 @@ tbl_luminance_ac = [
     [0xF, 0xA, 16, 0b1111111111111110],
 ]
 
+# Run/Size, Code length, Code word
 tbl_chrominance_ac =[
     [0x0, 0x0,  2, 0b00], # EOB
     [0x0, 0x1,  2, 0b01],
@@ -383,16 +387,24 @@ tbl_chrominance_ac =[
 ]
 
 
+
+def make_mask(s, v):
+    m = 2**s - 1
+    s = 16-s
+    m <<= s
+    v <<= s
+    return v, m
+
 def conv_table_dc(src):
     tbl = [None for _ in range(12)]
     for s in src:
-        tbl[s[0]] = (s[1], s[2])
+        tbl[s[0]] = (s[1], s[2]) + make_mask(s[1], s[2])
     return tbl
 
 def conv_table_ac(src):
     tbl = [[None for _ in range(11)] for _ in range(16)]
     for s in src:
-        tbl[s[0]][s[1]] = (s[1], s[2])
+        tbl[s[0]][s[1]] = (s[2], s[3]) + make_mask(s[2], s[3])
     return tbl
 
 table_luminance_dc = conv_table_dc(tbl_luminance_dc)
