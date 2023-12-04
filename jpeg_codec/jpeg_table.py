@@ -387,30 +387,53 @@ tbl_chrominance_ac =[
 ]
 
 
-
 def make_mask(s, v):
     m = 2**s - 1
     s = 16-s
     m <<= s
     v <<= s
-    return v, m
+    return [v, m]
+
+def add_mask(src):
+    dst = []
+    for v in src:
+        dst.append(v + make_mask(v[-2], v[-1]))
+    return dst
 
 def conv_table_dc(src):
     tbl = [None for _ in range(12)]
     for s in src:
-        tbl[s[0]] = (s[1], s[2]) + make_mask(s[1], s[2])
+        tbl[s[0]] = {
+#           'size': s[0],
+            'length': s[1],
+            'code': s[2],
+            'value': s[3],
+            'mask': s[4],
+        }
     return tbl
 
 def conv_table_ac(src):
     tbl = [[None for _ in range(11)] for _ in range(16)]
     for s in src:
-        tbl[s[0]][s[1]] = (s[2], s[3]) + make_mask(s[2], s[3])
+        tbl[s[0]][s[1]] = {
+#           'run': s[0],
+#           'size': s[1],
+            'length': s[2],
+            'code': s[3],
+            'value': s[4],
+            'mask': s[5],
+        }
     return tbl
 
-table_luminance_dc = conv_table_dc(tbl_luminance_dc)
-table_chrominance_dc = conv_table_dc(tbl_chrominance_dc)
-table_luminance_ac = conv_table_ac(tbl_luminance_ac)
-table_chrominance_ac = conv_table_ac(tbl_chrominance_ac)
+list_luminance_dc = add_mask(tbl_luminance_dc)
+list_chrominance_dc = add_mask(tbl_chrominance_dc)
+list_luminance_ac = add_mask(tbl_luminance_ac)
+list_chrominance_ac = add_mask(tbl_chrominance_ac)
+
+table_luminance_dc = conv_table_dc(list_luminance_dc)
+table_chrominance_dc = conv_table_dc(list_chrominance_dc)
+table_luminance_ac = conv_table_ac(list_luminance_ac)
+table_chrominance_ac = conv_table_ac(list_chrominance_ac)
 
 
 # DCT hyoer-parameter
