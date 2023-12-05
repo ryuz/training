@@ -400,40 +400,72 @@ def add_mask(src):
         dst.append(v + make_mask(v[-2], v[-1]))
     return dst
 
-def conv_table_dc(src):
-    tbl = [None for _ in range(12)]
+def conv_dict_dc(src):
+    dst = []
     for s in src:
-        tbl[s[0]] = {
-#           'size': s[0],
+        dst.append({
+            'size': s[0],
             'length': s[1],
             'code': s[2],
             'value': s[3],
             'mask': s[4],
-        }
-    return tbl
+        })
+    return dst
 
-def conv_table_ac(src):
-    tbl = [[None for _ in range(11)] for _ in range(16)]
+def conv_dict_ac(src):
+    dst = []
     for s in src:
-        tbl[s[0]][s[1]] = {
-#           'run': s[0],
-#           'size': s[1],
+        dst.append({
+            'run': s[0],
+            'size': s[1],
             'length': s[2],
             'code': s[3],
             'value': s[4],
             'mask': s[5],
-        }
-    return tbl
+        })
+    return dst
+
+def conv_table_dc(src):
+    dst = [None for _ in range(12)]
+    for s in src:
+        dst[s['size']] = s
+    return dst
+
+def conv_table_ac(src):
+    dst = [[None for _ in range(11)] for _ in range(16)]
+    for s in src:
+        dst[s['run']][s['size']] = s
+    return dst
+
+def make_decode_table(src):
+    dst = [None for _ in range(65536)]
+    for s in src:
+        c = s['value']
+        l = 16 - s['length']
+        for i in range(2**l):
+            dst[c+i] = s
+    return dst
+
 
 list_luminance_dc = add_mask(tbl_luminance_dc)
 list_chrominance_dc = add_mask(tbl_chrominance_dc)
 list_luminance_ac = add_mask(tbl_luminance_ac)
 list_chrominance_ac = add_mask(tbl_chrominance_ac)
 
+list_luminance_dc = conv_dict_dc(list_luminance_dc)
+list_chrominance_dc = conv_dict_dc(list_chrominance_dc)
+list_luminance_ac = conv_dict_ac(list_luminance_ac)
+list_chrominance_ac = conv_dict_ac(list_chrominance_ac)
+
 table_luminance_dc = conv_table_dc(list_luminance_dc)
 table_chrominance_dc = conv_table_dc(list_chrominance_dc)
 table_luminance_ac = conv_table_ac(list_luminance_ac)
 table_chrominance_ac = conv_table_ac(list_chrominance_ac)
+
+decode_luminance_dc = make_decode_table(list_luminance_dc)
+decode_chrominance_dc = make_decode_table(list_chrominance_dc)
+decode_luminance_ac = make_decode_table(list_luminance_ac)
+decode_chrominance_ac = make_decode_table(list_chrominance_ac)
 
 
 # DCT hyoer-parameter
