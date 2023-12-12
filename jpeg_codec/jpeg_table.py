@@ -407,8 +407,8 @@ def conv_dict_dc(src):
             'size': s[0],
             'length': s[1],
             'code': s[2],
-            'value': s[3],
-            'mask': s[4],
+            'ptn16': s[3],
+            'msk16': s[4],
         })
     return dst
 
@@ -420,8 +420,8 @@ def conv_dict_ac(src):
             'size': s[1],
             'length': s[2],
             'code': s[3],
-            'value': s[4],
-            'mask': s[5],
+            'ptn16': s[4],
+            'msk16': s[5],
         })
     return dst
 
@@ -438,12 +438,15 @@ def conv_table_ac(src):
     return dst
 
 def make_decode_table(src):
-    dst = [None for _ in range(65536)]
-    for s in src:
-        c = s['value']
-        l = 16 - s['length']
-        for i in range(2**l):
-            dst[c+i] = s
+    with open("hoge.txt", "w") as f:
+        dst = [None for _ in range(65536)]
+        for s in src:
+            p = s['ptn16']
+            l = 16 - s['length']
+    #       print(l, hex(p))
+            for i in range(2**l):
+                dst[p + i] = s
+                f.write("{} {}\n".format(hex(p + i), s))
     return dst
 
 
