@@ -438,15 +438,12 @@ def conv_table_ac(src):
     return dst
 
 def make_decode_table(src):
-    with open("hoge.txt", "w") as f:
-        dst = [None for _ in range(65536)]
-        for s in src:
-            p = s['ptn16']
-            l = 16 - s['length']
-    #       print(l, hex(p))
-            for i in range(2**l):
-                dst[p + i] = s
-                f.write("{} {}\n".format(hex(p + i), s))
+    dst = [None for _ in range(65536)]
+    for s in src:
+        p = s['ptn16']
+        l = 16 - s['length']
+        for i in range(2**l):
+            dst[p + i] = s
     return dst
 
 
