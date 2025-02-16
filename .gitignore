@@ -13,5 +13,8 @@ Untitled*
 *.jpg
 *.png
 *.bmp
+*.mp4
+*.lwi
 
 imaging/
+data/
