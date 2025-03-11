@@ -15,6 +15,13 @@ Untitled*
 *.bmp
 *.mp4
 *.lwi
+*.pgm
+*.ppm
+
+assets/
+
+*.gz
+*.zip
 
 imaging/
 data/
